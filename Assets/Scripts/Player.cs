@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public GameObject bulletPrefab;
 
     public bool autoShoot;
+    public bool smartAutoShoot;
     
     private const float MAXLeft = -9.8f;
     private const float MAXRight = 9.7f;
@@ -16,20 +17,40 @@ public class Player : MonoBehaviour
     public float shotCooldown=2f;
     private bool isShooting = false;
     
+    public bool BCIMode = false;
+    public float BCIModeLeft = -3.83f;
+    public float BCIModeRight = 3.83f;
+    
     private void Update()
     {
-        if (Input.GetKey(KeyCode.LeftArrow) && transform.position.x > MAXLeft)
+        if (BCIMode)
         {
-            transform.Translate(Vector2.left * Time.deltaTime* SpaceshipSpeed);
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+                transform.localPosition = new Vector2(BCIModeLeft, transform.localPosition.y);
+            else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+                transform.localPosition = new Vector2(BCIModeRight, transform.localPosition.y);
+            else
+                transform.localPosition = new Vector2(0, transform.localPosition.y);
         }
-        if (Input.GetKey(KeyCode.RightArrow) && transform.position.x < MAXRight)
+        else
         {
-            transform.Translate(Vector2.right * Time.deltaTime* SpaceshipSpeed);
+            if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))  && transform.position.x > MAXLeft)
+                transform.Translate(Vector2.left * Time.deltaTime* SpaceshipSpeed);
+            if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && transform.position.x < MAXRight)
+                transform.Translate(Vector2.right * Time.deltaTime* SpaceshipSpeed);
         }
 
-        if ((Input.GetKey(KeyCode.Space)||autoShoot) && !isShooting)
+        if ((Input.GetKey(KeyCode.Space) || autoShoot) && !isShooting)
         {
-            StartCoroutine(Shoot());
+            if (smartAutoShoot)
+            {
+                if (transform.localPosition.x!=0)
+                    StartCoroutine(Shoot());
+            }
+            else
+            {
+                StartCoroutine(Shoot());
+            }
         }
     }
 

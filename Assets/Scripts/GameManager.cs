@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private int AliensAlive = 5;
+    public int MaxAliens = 5;
+    private int AliensAlive;
     private GameObject[] Aliens;
     
     private void Start()
     {
+        AliensAlive = MaxAliens;
         Aliens = GameObject.FindGameObjectsWithTag("Alien");
     }
 
@@ -31,7 +33,7 @@ public class GameManager : MonoBehaviour
                 Alien.SetActive(true);
             }
 
-            AliensAlive = 5;
+            AliensAlive = MaxAliens;
         }
     }
 }
